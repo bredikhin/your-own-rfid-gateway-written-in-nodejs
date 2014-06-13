@@ -1,0 +1,23 @@
+{
+  "name": "your-own-rfid-gateway-written-in-nodejs",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Your Own RFID Gateway Written in Node.js",
+  "dependencies": {
+    "async": "~0.2.9",
+    "lodash": "^2.4.1",
+    "mockout": "0.0.2"
+  },
+  "devDependencies": {
+    "mocha": "^1.20.0",
+    "should": "^4.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "NODE_ENV=test mocha test --recursive -R spec"
+  },
+  "main": "index.js",
+  "repository": "",
+  "author": "Ruslan Bredikhin",
+  "license": "MIT"
+}
