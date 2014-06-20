@@ -1,4 +1,9 @@
-var config = require('./config');
-var Gateway = require('./lib/gateway');
+    'use strict';
 
-module.exports = new Gateway(config);
+    /**
+     * Dependencies
+     */
+    var config = require('./config.json');
+    var Gateway = require('./lib/gateway');
+
+    module.exports = new Gateway(config);
