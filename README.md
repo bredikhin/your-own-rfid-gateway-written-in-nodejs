@@ -88,7 +88,7 @@ creation of scanning and uploading objects, etc. Here is how it looks like
     var _ = require('lodash');
     var Uploader = require('./uploader');
     var Listener = require('./listener');
-    var defaults = require('./defaults');
+    var defaults = require('./defaults.json');
 
     module.exports = Gateway;
 
@@ -201,6 +201,9 @@ below:
     function Listener(config) {
       var that = this;
 
+      config = config || {};
+      config['devices'] = config['devices'] || [];
+
       Transform.call(this, {objectMode: true});
 
       async.each(config['devices'], function(deviceConfig, cb) {
@@ -270,7 +273,7 @@ lines and parses into JSON objects that are being pushed
 further.
 
 This processing procedure defines the following principles
-that have to be used while architecturing reader drivers:
+that have to be used while architecturing reader modules:
 
 - reader module has to print the scanning results as
 stringified JSON objects, one per line, to its `stdout`;
@@ -288,11 +291,133 @@ some changes we are tracking.
 
 ### Uploader
 
-Finally, ...
+Finally, after all these manipulations we have our data
+flowing into the `Uploader` object, which is a writable
+stream with the object mode enabled, which means it
+receives JavaScript objects sent by the reader driver
+modules. Since the implementation of a specific approach
+to sending the data to remote servers falls beyond the
+scope of this article, we will just log the incoming
+messages to the console. The code below goes to
+`./lib/uploader.js`:
+
+    'use strict';
+
+    /**
+     * Dependencies
+     */
+    var Writable = require('stream').Writable;
+    var util = require('util');
+
+    module.exports = Uploader;
+
+    function Uploader(config) {
+      Writable.call(this, {objectMode: true});
+    }
+
+    util.inherits(Uploader, Writable);
+
+    Uploader.prototype._write = function(message, enc, next) {
+      console.info('Sending: ' + JSON.stringify(message));
+
+      // Sending to the cloud here
+
+      next();
+    };
 
 ### Reader Modules
 
+One of the most important subjects we haven't looked
+into yet is the reader modules. The main reason is the
+fact that any specific implementation of such a module
+would rely heavily on the hardware being used. In other
+words, since there is no standard approach to the way
+RFID readers connect to gateways, every reader
+manufacturer (or even devices from the same
+manufacturer) requires its own reader module to be
+written. We are planning to examine some examples of
+such modules in greater depth in our future posts, but
+for now let's just use the
+[`mockout`](https://www.npmjs.org/package/mockout)
+package to simulate messages from a reader module.
+
+### Putting It All Together
+
+There is a couple of last things we need to do before
+we will be able to start our gateway.
+
+First, we need an example config file. This will go to
+`./config.json`:
+
+    {
+      "listener": {
+        "devices": [
+          {
+            "path": "/some/path1",
+            "module": "./node_modules/mockout"
+          },
+          {
+            "path": "/some/path2",
+            "module": "./node_modules/mockout"
+          },
+          {
+            "path": "/some/path3",
+            "module": "./node_modules/mockout"
+          }
+        ]
+      },
+      "uploader": {
+      }
+    }
+    
+Also, let's put default configuration values in
+`./config/defaults.json`:
+
+    {
+      "listener": {
+        "devices": []
+      },
+      "uploader": {}
+    }
+    
+Finally, we have to install the packages used in
+the implementation of our RFID gateway:
+
+    npm install --save async@0.9.0 lodash@2.4.1 mockout@0.0.2 split2@0.1.2
+    
+This will also add listed packages to the dependencies
+section of our `./package.json` file.
+
+And that is it. If we run `node index.js` now,
+we will see some output similar to the following:
+
+    Sending: {"sortOf":"anObject","initializedWith":{"event":"connect","config":{"path":"tmr:///dev/ttyACM2","module":"./node_modules/mockout"}}}
+    Sending: {"sortOf":"anObject","initializedWith":{"event":"connect","config":{"path":"tmr:///dev/ttyACM1","module":"./node_modules/mockout"}}}
+    Sending: {"sortOf":"anObject","initializedWith":{"event":"connect","config":{"path":"tmr:///dev/ttyACM3","module":"./node_modules/mockout"}}}
+    Sending: {"sortOf":"anObject","initializedWith":{"event":"connect","config":{"path":"tmr:///dev/ttyACM2","module":"./node_modules/mockout"}}}
+    Sending: {"sortOf":"anObject","initializedWith":{"event":"connect","config":{"path":"tmr:///dev/ttyACM1","module":"./node_modules/mockout"}}}
+    Sending: {"sortOf":"anObject","initializedWith":{"event":"connect","config":{"path":"tmr:///dev/ttyACM3","module":"./node_modules/mockout"}}}
+    ...
+
+This means that we have three child processes piping
+the data from RFID readers through our `Listener` to
+the `Uploader`, which is ready to send it wherever
+we want.
+
 ## Next Steps
+
+So, does this implementation cover completely the
+software for peripheral nodes of our RFID system?
+Or course, no. It provides a robust way to
+organize the flow of data from the hardware to the
+point when it's ready to be sent to remote servers
+(which is pretty powerful result for only about two
+hundred lines of code), but specific implementation
+of reader modules (for different RFID manufacturers)
+and uploading procedures (which, for example, can
+use special protocols like MQTT or CoAP) worth a
+closer look and can be a topic of our further
+articles.
 
 ## License
 
