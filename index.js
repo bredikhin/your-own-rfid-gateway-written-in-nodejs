@@ -1,9 +1,9 @@
-    'use strict';
+'use strict';
 
-    /**
-     * Dependencies
-     */
-    var config = require('./config.json');
-    var Gateway = require('./lib/gateway');
+/**
+ * Dependencies
+ */
+var config = require('./config.json');
+var Gateway = require('./lib/gateway');
 
-    module.exports = new Gateway(config);
+module.exports = new Gateway(config);
