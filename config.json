@@ -2,19 +2,18 @@
   "listener": {
     "devices": [
       {
-        "path": "tmr:///dev/ttyACM1",
+        "path": "/some/path1",
         "module": "./node_modules/mockout"
       },
       {
-        "path": "tmr:///dev/ttyACM2",
+        "path": "/some/path1",
         "module": "./node_modules/mockout"
       },
       {
-        "path": "tmr:///dev/ttyACM3",
+        "path": "/some/path1",
         "module": "./node_modules/mockout"
       }
     ]
   },
-  "uploader": {
-  }
+  "uploader": {}
 }
