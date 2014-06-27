@@ -50,7 +50,9 @@ accessible. Let's create a new package for our RFID gateway by typing
 
 Next, let's assume we have a file `config.json` containing some configuration
 for our gateway in the root folder of our package. Then the entry point for
-our application (`./index.js`) can look like this:
+our application (`./index.js`) can look like this (the complete code of the
+implementation is available
+[here](https://github.com/bredikhin/your-own-rfid-gateway-written-in-nodejs)):
 
     'use strict';
 
