@@ -173,7 +173,7 @@ the data and transmitting it upstream.
 As we saw on the software architecture diagram, `Listener` module object
 is a transform stream, which means it is writable and readable (and can
 be piped from and to). Since the current version of Node.js streams (as
-of v0.10, so called "streams2") operates on Strings and Buffers by
+of v0.10, so called "streams2") operates on strings and buffers by
 default, we need to put our `Listener` stream in the object mode if we
 want it to emit generic JavaScript values. So, we have to call its
 parent constructor like this:
@@ -184,7 +184,7 @@ Next, we need to fork child processes for different RFID readers
 attached to our gateway (as listed in the configuration file). Using
 `async` library, we make sure all the devices are activated (see
 `attach` function) and then emit `ready` event on our `Listener`
-object. The whole module we will have in `lib/listener.js` is listed
+object. The whole module we will have in `./lib/listener.js` is listed
 below:
 
     'use strict';
@@ -289,13 +289,13 @@ case simply pushing further all the messages it receives, but
 at the same time it could be used to do some preprocessing
 (and/or error handling). For example, we could cache the
 messages, analyze the new input and push it only in case of
-some changes we are tracking.
+some specific changes we are tracking.
 
 ### Uploader
 
 Finally, after all these manipulations we have our data
 flowing into the `Uploader` object, which is a writable
-stream with the object mode enabled, which means it
+stream with the object mode enabled. That means it
 receives JavaScript objects sent by the reader driver
 modules. Since the implementation of a specific approach
 to sending the data to remote servers falls beyond the
@@ -333,8 +333,8 @@ One of the most important subjects we haven't looked
 into yet is the reader modules. The main reason is the
 fact that any specific implementation of such a module
 would rely heavily on the hardware being used. In other
-words, since there is no standard approach to the way
-RFID readers connect to gateways, every reader
+words, since there is no standard way for
+RFID readers to connect to gateways, every reader
 manufacturer (or even devices from the same
 manufacturer) requires its own reader module to be
 written. We are planning to examine some examples of
@@ -417,7 +417,9 @@ point when it's ready to be sent to remote servers
 hundred lines of code), but specific implementation
 of reader modules (for different RFID manufacturers)
 and uploading procedures (which, for example, can
-use special protocols like MQTT or CoAP) worth a
+use special protocols like
+[MQTT](http://en.wikipedia.org/wiki/MQTT) or
+[CoAP](http://en.wikipedia.org/wiki/CoAP)) worth a
 closer look and can be a topic of our further
 articles.
 
