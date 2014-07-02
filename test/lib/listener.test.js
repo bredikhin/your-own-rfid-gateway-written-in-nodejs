@@ -9,7 +9,7 @@ var Listener = require('../../lib/listener');
 var listener = new Listener();
 
 describe('Listener', function() {
-  it('is an transform stream', function(done) {
+  it('is a transform stream', function(done) {
     listener.should.be.an.instanceOf(Transform);    
 
     done();

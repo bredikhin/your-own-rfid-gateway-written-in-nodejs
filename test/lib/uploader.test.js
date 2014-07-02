@@ -9,7 +9,7 @@ var Uploader = require('../../lib/uploader');
 var uploader = new Uploader();
 
 describe('Uploader', function() {
-  it('is an writable stream', function(done) {
+  it('is a writable stream', function(done) {
     uploader.should.be.an.instanceOf(Writable);    
 
     done();
